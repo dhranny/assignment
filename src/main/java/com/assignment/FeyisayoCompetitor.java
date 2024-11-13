@@ -12,10 +12,11 @@ public class FeyisayoCompetitor {
     private List<Integer> scores;
 
     public FeyisayoCompetitor(int competitorID, String competitorName, Level competitorLevel) {
+        
         this.competitorID = competitorID;
         this.competitorName = competitorName;
         this.competitorLevel = competitorLevel;
-        scores = new ArrayList();
+        scores = new ArrayList<Integer>();
     }
 
     public void setCompetitorName(String competitorName) {
@@ -63,7 +64,7 @@ public class FeyisayoCompetitor {
 
     public String getFullDetails(){
         String sb = "Competitor ID is " + competitorID + ", " + "name " + competitorName + ". " + competitorName 
-        + "is a " + competitorLevel + " competitor with overall score of " + getOverallScore() + ".\n";
+            + " is a " + competitorLevel + " competitor with overall score of " + getOverallScore() + ".\n";
         return sb;
     }
 

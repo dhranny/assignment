@@ -52,15 +52,15 @@ public class MysqlCli {
     
     public static FeyisayoCompetitor getCompetitor(int id) {
         String query1 = "SELECT * FROM competitors WHERE id = ?";
-        String query2 = "SELECT * FROM scores WHERE id = 0";
+        String query2 = "SELECT * FROM scores WHERE id = ?";
         FeyisayoCompetitor comp = null;
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             PreparedStatement statement1 = connection.prepareStatement(query1);
             PreparedStatement statement2 = connection.prepareStatement(query2)) {
             statement1.setInt(1, id);
             ResultSet resultSet1 = statement1.executeQuery();
-            //statement2.setInt(1, id);
-            ResultSet resultSet2 = statement2.executeQuery(query2);
+            statement2.setInt(1, id);
+            ResultSet resultSet2 = statement2.executeQuery();
             if (!resultSet1.next()) {
                 return null;
             }
@@ -79,5 +79,35 @@ public class MysqlCli {
             e.printStackTrace();
         }
         return comp;
+    }
+    
+    public static List<FeyisayoCompetitor> getAllCompetitors() {
+        String query1 = "SELECT * FROM competitors";
+        String query2 = "SELECT * FROM scores WHERE id = ?";
+        FeyisayoCompetitor comp = null;
+        LinkedList<FeyisayoCompetitor> competitors = new LinkedList<>();
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            PreparedStatement statement1 = connection.prepareStatement(query1);
+            PreparedStatement statement2 = connection.prepareStatement(query2)) {
+            ResultSet resultSet1 = statement1.executeQuery();
+            while (resultSet1.next()) {
+                int id = resultSet1.getInt("id");
+                String name = resultSet1.getString("name");
+                Level level = Level.valueOf(resultSet1.getString("level"));
+                comp = new FeyisayoCompetitor(id, name, level);
+                ArrayList<Integer> scores = new ArrayList<>(); 
+                statement2.setInt(1, id);
+                ResultSet resultSet2 = statement2.executeQuery();              
+                while (resultSet2.next()) {
+                    int score = resultSet2.getInt("score");
+                    scores.add(score);
+                }
+                comp.setScores(scores);
+                competitors.add(comp);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return competitors;
     }
 }
